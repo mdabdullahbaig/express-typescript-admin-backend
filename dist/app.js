@@ -6,11 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dev_1 = __importDefault(require("./config/dev"));
 const connect_1 = __importDefault(require("./database/connect"));
+const posts_1 = __importDefault(require("./routes/posts"));
 const app = (0, express_1.default)();
 const port = dev_1.default.port;
 const host = dev_1.default.host;
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
+app.use("/api/posts", posts_1.default);
+app.use((err, req, res, next) => {
+    res.status(500).json({ message: err.message });
+});
 (0, connect_1.default)().then(() => {
     app
         .listen(port, host, function () {
