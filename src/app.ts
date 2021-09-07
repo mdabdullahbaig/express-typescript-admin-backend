@@ -10,10 +10,6 @@ const host = config.host;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => {
-  res.send("Hello India");
-});
-
 connect().then(() => {
   app
     .listen(port, host, function () {

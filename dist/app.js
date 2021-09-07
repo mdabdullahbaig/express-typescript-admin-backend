@@ -11,9 +11,6 @@ const port = dev_1.default.port;
 const host = dev_1.default.host;
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
-app.get("/", (req, res) => {
-    res.send("Hello India");
-});
 (0, connect_1.default)().then(() => {
     app
         .listen(port, host, function () {
