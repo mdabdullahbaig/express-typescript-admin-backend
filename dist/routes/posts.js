@@ -8,4 +8,6 @@ router.get("/", posts_1.getPosts);
 router.get("/:id", posts_1.getPostById);
 router.patch("/:id", posts_1.updatePostById);
 router.delete("/:id", posts_1.deletePostById);
+// Get posts by Creator
+router.get("/creator/:userId", posts_1.getPostsByCreator);
 exports.default = router;

@@ -5,6 +5,7 @@ import {
   getPostById,
   updatePostById,
   deletePostById,
+  getPostsByCreator,
 } from "../controllers/posts";
 
 const router = Router();
@@ -14,5 +15,8 @@ router.get("/", getPosts);
 router.get("/:id", getPostById);
 router.patch("/:id", updatePostById);
 router.delete("/:id", deletePostById);
+
+// Get posts by Creator
+router.get("/creator/:userId", getPostsByCreator);
 
 export default router;
