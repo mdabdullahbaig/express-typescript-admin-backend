@@ -12,16 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deletePostById = exports.updatePostById = exports.getPostById = exports.getPosts = exports.createPost = void 0;
+exports.getPostsByCreator = exports.deletePostById = exports.updatePostById = exports.getPostById = exports.getPosts = exports.createPost = void 0;
 const posts_1 = __importDefault(require("../models/posts"));
 const HttpError_1 = require("../utils/HttpError");
 // Create Post
 const createPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const title = req.body.title;
     const body = req.body.body;
+    const imageUri = req.body.imageUri;
+    const creator = req.body.creator;
     const createdPost = new posts_1.default({
         title,
         body,
+        imageUri,
+        creator,
     });
     try {
         yield createdPost.save();
@@ -44,7 +48,7 @@ const getPosts = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         return next(error);
     }
     if (posts.length === 0) {
-        const error = new HttpError_1.HttpError("There is no posts present.", 500);
+        const error = new HttpError_1.HttpError("There is no posts present.", 400);
         return next(error);
     }
     res.status(200).json(posts);
@@ -59,10 +63,10 @@ const getPostById = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err, 500);
-        next(error);
+        return next(error);
     }
     if (!post) {
-        const error = new HttpError_1.HttpError("There is no post present on this id.", 500);
+        const error = new HttpError_1.HttpError("There is no post present on this id.", 400);
         return next(error);
     }
     res.status(200).json(post);
@@ -73,26 +77,28 @@ const updatePostById = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
     const id = req.params.id;
     const title = req.body.title;
     const body = req.body.body;
+    const imageUri = req.body.imageUri;
     let post;
     try {
         post = yield posts_1.default.findById(id).exec();
     }
     catch (err) {
-        const error = new HttpError_1.HttpError(err, 500);
-        next(error);
+        const error = new HttpError_1.HttpError(err.message, 500);
+        return next(error);
     }
     if (!post) {
-        const error = new HttpError_1.HttpError("There is no post present on this id.", 500);
+        const error = new HttpError_1.HttpError("There is no post present on this id.", 400);
         return next(error);
     }
     post.title = title;
     post.body = body;
+    post.imageUri = imageUri;
     try {
         yield post.save();
     }
     catch (err) {
-        const error = new HttpError_1.HttpError(err, 500);
-        next(error);
+        const error = new HttpError_1.HttpError(err.message, 500);
+        return next(error);
     }
     res.status(200).json(post);
 });
@@ -105,11 +111,11 @@ const deletePostById = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         post = yield posts_1.default.findById(id).exec();
     }
     catch (err) {
-        const error = new HttpError_1.HttpError(err, 500);
-        next(error);
+        const error = new HttpError_1.HttpError(err.message, 500);
+        return next(error);
     }
     if (!post) {
-        const error = new HttpError_1.HttpError("There is no post present on this id.", 500);
+        const error = new HttpError_1.HttpError("There is no post present on this id.", 400);
         return next(error);
     }
     try {
@@ -117,8 +123,26 @@ const deletePostById = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err, 500);
-        next(error);
+        return next(error);
     }
     res.status(200).json({ message: "Post has been deleted!" });
 });
 exports.deletePostById = deletePostById;
+// Get posts by Creator
+const getPostsByCreator = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.params.userId;
+    let postsByCreator;
+    try {
+        postsByCreator = yield posts_1.default.find({ creator: userId }).populate("creator");
+    }
+    catch (err) {
+        const error = new HttpError_1.HttpError(err.message, 500);
+        return next(error);
+    }
+    if (postsByCreator.length === 0) {
+        const error = new HttpError_1.HttpError("There is no posts present by this creator.", 400);
+        return next(error);
+    }
+    res.status(200).json(postsByCreator);
+});
+exports.getPostsByCreator = getPostsByCreator;

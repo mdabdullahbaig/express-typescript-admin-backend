@@ -1,20 +1,24 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 export interface PostDocument extends mongoose.Document {
   title: string;
   body: string;
+  imageUri: string;
+  creator: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const PostSchema = new mongoose.Schema(
+const PostSchema = new Schema(
   {
-    title: { type: String, default: true },
-    body: { type: String, default: true },
+    title: { type: String, required: true },
+    body: { type: String, required: true },
+    imageUri: { type: String, default: true },
+    creator: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );
 
-const Post = mongoose.model<PostDocument>("Post", PostSchema);
+const Post = model<PostDocument>("Post", PostSchema);
 
 export default Post;
