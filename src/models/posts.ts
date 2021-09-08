@@ -5,6 +5,7 @@ export interface PostDocument extends mongoose.Document {
   body: string;
   imageUri: string;
   creator: string;
+  comments: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +16,7 @@ const PostSchema = new Schema(
     body: { type: String, required: true },
     imageUri: { type: String, default: true },
     creator: { type: Schema.Types.ObjectId, ref: "User" },
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   },
   { timestamps: true }
 );

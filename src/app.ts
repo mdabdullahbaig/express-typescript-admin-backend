@@ -4,6 +4,7 @@ import config from "./config/dev";
 import connect from "./database/connect";
 import usersRoute from "./routes/users";
 import postsRoute from "./routes/posts";
+import commentsRoute from "./routes/posts";
 
 const app: Application = express();
 
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/users", usersRoute);
 app.use("/api/posts", postsRoute);
+app.use("/api/comments", commentsRoute);
 
 // Middleware (If Url is not correct)
 app.use((req: Request, res: Response, next: NextFunction) => {
