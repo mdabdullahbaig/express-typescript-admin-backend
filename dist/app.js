@@ -4,17 +4,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const HttpError_1 = require("./utils/HttpError");
 const dev_1 = __importDefault(require("./config/dev"));
 const connect_1 = __importDefault(require("./database/connect"));
+const users_1 = __importDefault(require("./routes/users"));
 const posts_1 = __importDefault(require("./routes/posts"));
 const app = (0, express_1.default)();
 const port = dev_1.default.port;
 const host = dev_1.default.host;
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
+// Middleware (If site is in maintenance mode)
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//   res
+//     .status(503)
+//     .send("Site is currently in maintenance mode, Check back soon.");
+// });
+app.use("/api/users", users_1.default);
 app.use("/api/posts", posts_1.default);
+// Middleware (If Url is not correct)
+app.use((req, res, next) => {
+    const error = new HttpError_1.HttpError("Something went wrong.", 500);
+    return next(error);
+});
+// Middleware (If some error occured while CRUD operation.)
 app.use((err, req, res, next) => {
-    res.status(500).json({ message: err.message });
+    if (res.headersSent) {
+        return next(err);
+    }
+    res.status(err.statusCode || 500);
+    res.json({ message: err.message || "An unknown error occured!" });
 });
 (0, connect_1.default)().then(() => {
     app
