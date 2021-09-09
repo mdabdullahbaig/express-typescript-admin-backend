@@ -6,10 +6,12 @@ import {
   updateUserById,
   deleteUserById,
 } from "../controllers/users";
+import RequestValidator from "../middleware/RequestValidator";
+import { createUserSchema } from "../utils/createUserSchema";
 
 const router = Router();
 
-router.post("/", createUser);
+router.post("/", RequestValidator(createUserSchema), createUser);
 router.get("/", getUsers);
 router.get("/:id", getUserById);
 router.patch("/:id", updateUserById);

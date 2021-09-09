@@ -5,6 +5,7 @@ import connect from "./database/connect";
 import usersRoute from "./routes/users";
 import postsRoute from "./routes/posts";
 import commentsRoute from "./routes/comments";
+import authRoute from "./routes/auth";
 
 const app: Application = express();
 
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/users", usersRoute);
 app.use("/api/posts", postsRoute);
 app.use("/api/comments", commentsRoute);
+app.use("/api/auth", authRoute);
 
 // Middleware (If Url is not correct)
 app.use((req: Request, res: Response, next: NextFunction) => {

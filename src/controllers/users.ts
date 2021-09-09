@@ -4,9 +4,9 @@ import { HttpError } from "../utils/HttpError";
 
 // Create User
 export const createUser: RequestHandler = async (req, res, next) => {
-  const email = (req.body as { email: string }).email;
   const firstName = (req.body as { firstName: string }).firstName;
   const lastName = (req.body as { lastName: string }).lastName;
+  const email = (req.body as { email: string }).email;
   const mobileNumber = (req.body as { mobileNumber: string }).mobileNumber;
   const password = (req.body as { password: string }).password;
 
@@ -27,9 +27,9 @@ export const createUser: RequestHandler = async (req, res, next) => {
   }
 
   const createdUser = new User({
-    email,
     firstName,
     lastName,
+    email,
     mobileNumber,
     password,
   });

@@ -4,13 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const users_1 = require("../controllers/users");
+const auth_1 = require("../controllers/auth");
 const RequestValidator_1 = __importDefault(require("../middleware/RequestValidator"));
-const createUserSchema_1 = require("../utils/createUserSchema");
+const authenticateUserSchema_1 = require("../utils/authenticateUserSchema");
 const router = (0, express_1.Router)();
-router.post("/", (0, RequestValidator_1.default)(createUserSchema_1.createUserSchema), users_1.createUser);
-router.get("/", users_1.getUsers);
-router.get("/:id", users_1.getUserById);
-router.patch("/:id", users_1.updateUserById);
-router.delete("/:id", users_1.deleteUserById);
+router.post("/", (0, RequestValidator_1.default)(authenticateUserSchema_1.authenticateUserSchema), auth_1.authenticateUser);
 exports.default = router;

@@ -10,6 +10,7 @@ const connect_1 = __importDefault(require("./database/connect"));
 const users_1 = __importDefault(require("./routes/users"));
 const posts_1 = __importDefault(require("./routes/posts"));
 const comments_1 = __importDefault(require("./routes/comments"));
+const auth_1 = __importDefault(require("./routes/auth"));
 const app = (0, express_1.default)();
 const port = dev_1.default.port;
 const host = dev_1.default.host;
@@ -24,6 +25,7 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use("/api/users", users_1.default);
 app.use("/api/posts", posts_1.default);
 app.use("/api/comments", comments_1.default);
+app.use("/api/auth", auth_1.default);
 // Middleware (If Url is not correct)
 app.use((req, res, next) => {
     const error = new HttpError_1.HttpError("Something went wrong.", 500);

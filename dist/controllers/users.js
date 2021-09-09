@@ -17,9 +17,9 @@ const users_1 = __importDefault(require("../models/users"));
 const HttpError_1 = require("../utils/HttpError");
 // Create User
 const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const email = req.body.email;
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
+    const email = req.body.email;
     const mobileNumber = req.body.mobileNumber;
     const password = req.body.password;
     let existingUser;
@@ -35,9 +35,9 @@ const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         return next(error);
     }
     const createdUser = new users_1.default({
-        email,
         firstName,
         lastName,
+        email,
         mobileNumber,
         password,
     });
