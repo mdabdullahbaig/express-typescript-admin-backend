@@ -20,20 +20,22 @@ const createComment = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     const body = req.body.body;
     const commentedBy = req.body.commentedBy;
     const postId = req.body.postId;
-    const createdComment = new comments_1.default({
-        body,
-        commentedBy,
-        postId,
-    });
+    let createdComment;
     try {
-        yield createdComment.save();
+        createdComment = yield new comments_1.default({
+            body,
+            commentedBy,
+            postId,
+        }).save();
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err, 500);
         return next(error);
     }
     try {
-        posts_1.default.findByIdAndUpdate(postId, { $push: { comments: createdComment._id } });
+        yield posts_1.default.findByIdAndUpdate(postId, {
+            $push: { comments: createdComment._id },
+        });
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err.message, 500);
@@ -43,20 +45,20 @@ const createComment = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 });
 exports.createComment = createComment;
 const getCommentsOnPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const postId = req.body.postId;
-    let post;
+    const postId = req.params.postId;
+    let comments;
     try {
-        post = yield posts_1.default.findById(postId).populate("comments");
+        comments = yield comments_1.default.find({ postId }).populate("commentedBy");
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err, 500);
         return next(error);
     }
-    if (!post) {
-        const error = new HttpError_1.HttpError("There is no post present on this id.", 400);
+    if (comments.length === 0) {
+        const error = new HttpError_1.HttpError("There is no comment present on this id.", 400);
         return next(error);
     }
-    res.status(200).json(post.comments);
+    res.status(200).json(comments);
 });
 exports.getCommentsOnPost = getCommentsOnPost;
 const updateCommentOnPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -87,7 +89,6 @@ const updateCommentOnPost = (req, res, next) => __awaiter(void 0, void 0, void 0
 exports.updateCommentOnPost = updateCommentOnPost;
 const deleteCommentOnPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const postId = req.body.postId;
     let comment;
     try {
         comment = yield comments_1.default.findById(id).exec();
@@ -101,7 +102,7 @@ const deleteCommentOnPost = (req, res, next) => __awaiter(void 0, void 0, void 0
         return next(error);
     }
     try {
-        posts_1.default.findByIdAndUpdate(postId, { $pull: { comments: id } });
+        yield posts_1.default.findByIdAndUpdate(comment.postId, { $pull: { comments: id } });
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err.message, 500);

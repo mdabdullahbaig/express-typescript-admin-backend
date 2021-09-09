@@ -4,7 +4,7 @@ import config from "./config/dev";
 import connect from "./database/connect";
 import usersRoute from "./routes/users";
 import postsRoute from "./routes/posts";
-import commentsRoute from "./routes/posts";
+import commentsRoute from "./routes/comments";
 
 const app: Application = express();
 

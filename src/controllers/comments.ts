@@ -8,21 +8,22 @@ export const createComment: RequestHandler = async (req, res, next) => {
   const commentedBy = (req.body as { commentedBy: string }).commentedBy;
   const postId = (req.body as { postId: string }).postId;
 
-  const createdComment = new Comment({
-    body,
-    commentedBy,
-    postId,
-  });
-
+  let createdComment;
   try {
-    await createdComment.save();
+    createdComment = await new Comment({
+      body,
+      commentedBy,
+      postId,
+    }).save();
   } catch (err: any) {
     const error = new HttpError(err, 500);
     return next(error);
   }
 
   try {
-    Post.findByIdAndUpdate(postId, { $push: { comments: createdComment._id } });
+    await Post.findByIdAndUpdate(postId, {
+      $push: { comments: createdComment._id },
+    });
   } catch (err: any) {
     const error = new HttpError(err.message, 500);
     return next(error);
@@ -32,21 +33,21 @@ export const createComment: RequestHandler = async (req, res, next) => {
 };
 
 export const getCommentsOnPost: RequestHandler = async (req, res, next) => {
-  const postId = (req.body as { postId: string }).postId;
-  let post;
+  const postId = req.params.postId;
+  let comments;
   try {
-    post = await Post.findById(postId).populate("comments");
+    comments = await Comment.find({ postId }).populate("commentedBy");
   } catch (err: any) {
     const error = new HttpError(err, 500);
     return next(error);
   }
 
-  if (!post) {
-    const error = new HttpError("There is no post present on this id.", 400);
+  if (comments.length === 0) {
+    const error = new HttpError("There is no comment present on this id.", 400);
     return next(error);
   }
 
-  res.status(200).json(post.comments);
+  res.status(200).json(comments);
 };
 
 export const updateCommentOnPost: RequestHandler = async (req, res, next) => {
@@ -80,7 +81,6 @@ export const updateCommentOnPost: RequestHandler = async (req, res, next) => {
 
 export const deleteCommentOnPost: RequestHandler = async (req, res, next) => {
   const id = req.params.id;
-  const postId = req.body.postId;
 
   let comment;
   try {
@@ -96,7 +96,7 @@ export const deleteCommentOnPost: RequestHandler = async (req, res, next) => {
   }
 
   try {
-    Post.findByIdAndUpdate(postId, { $pull: { comments: id } });
+    await Post.findByIdAndUpdate(comment.postId, { $pull: { comments: id } });
   } catch (err: any) {
     const error = new HttpError(err.message, 500);
     return next(error);

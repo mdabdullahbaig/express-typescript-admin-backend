@@ -9,7 +9,7 @@ import {
 const router = Router();
 
 router.post("/", createComment);
-router.get("/", getCommentsOnPost);
+router.get("/:postId", getCommentsOnPost);
 router.patch("/:id", updateCommentOnPost);
 router.delete("/:id", deleteCommentOnPost);
 
