@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticateUser = void 0;
+exports.getCurrentUser = exports.authenticateUser = void 0;
 const users_1 = __importDefault(require("../models/users"));
 const HttpError_1 = require("../utils/HttpError");
 const authenticateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -46,3 +46,20 @@ const authenticateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     return res.status(201).json({ token });
 });
 exports.authenticateUser = authenticateUser;
+const getCurrentUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentUser = req.currentUser;
+    let user;
+    try {
+        user = yield users_1.default.findOne({ _id: currentUser._id });
+    }
+    catch (err) {
+        const error = new HttpError_1.HttpError(err.message, 500);
+        return next(error);
+    }
+    if (!user) {
+        const error = new HttpError_1.HttpError("There is no current user.", 400);
+        return next(error);
+    }
+    res.status(200).json(user);
+});
+exports.getCurrentUser = getCurrentUser;

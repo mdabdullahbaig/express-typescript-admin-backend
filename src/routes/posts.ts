@@ -7,16 +7,17 @@ import {
   deletePostById,
   getPostsByCreator,
 } from "../controllers/posts";
+import { auth } from "../middleware/auth";
 
 const router = Router();
 
-router.post("/", createPost);
-router.get("/", getPosts);
-router.get("/:id", getPostById);
-router.patch("/:id", updatePostById);
-router.delete("/:id", deletePostById);
+router.post("/", auth, createPost);
+router.get("/", auth, getPosts);
+router.get("/:id", auth, getPostById);
+router.patch("/:id", auth, updatePostById);
+router.delete("/:id", auth, deletePostById);
 
 // Get posts by Creator
-router.get("/creator/:userId", getPostsByCreator);
+router.get("/creator/:userId", auth, getPostsByCreator);
 
 export default router;

@@ -5,12 +5,13 @@ import {
   updateCommentOnPost,
   deleteCommentOnPost,
 } from "../controllers/comments";
+import { auth } from "../middleware/auth";
 
 const router = Router();
 
-router.post("/", createComment);
-router.get("/:postId", getCommentsOnPost);
-router.patch("/:id", updateCommentOnPost);
-router.delete("/:id", deleteCommentOnPost);
+router.post("/", auth, createComment);
+router.get("/:postId", auth, getCommentsOnPost);
+router.patch("/:id", auth, updateCommentOnPost);
+router.delete("/:id", auth, deleteCommentOnPost);
 
 export default router;

@@ -2,22 +2,28 @@ import { RequestHandler } from "express";
 import Post from "../models/posts";
 import { HttpError } from "../utils/HttpError";
 
+interface CurrentUser {
+  _id: string;
+}
+
 // Create Post
 export const createPost: RequestHandler = async (req, res, next) => {
+  const currentUser = req.currentUser as CurrentUser;
+
   const title = (req.body as { title: string }).title;
   const body = (req.body as { body: string }).body;
   const imageUri = (req.body as { imageUri: string }).imageUri;
-  const creator = (req.body as { creator: string }).creator;
+  const creator = currentUser._id;
 
-  const createdPost = new Post({
-    title,
-    body,
-    imageUri,
-    creator,
-  });
+  let createdPost;
 
   try {
-    await createdPost.save();
+    createdPost = await new Post({
+      title,
+      body,
+      imageUri,
+      creator,
+    }).save();
   } catch (err: any) {
     const error = new HttpError(err, 500);
     return next(error);
@@ -67,6 +73,8 @@ export const getPostById: RequestHandler = async (req, res, next) => {
 
 // Update Post By Id
 export const updatePostById: RequestHandler = async (req, res, next) => {
+  const currentUser = req.currentUser as CurrentUser;
+
   const id = req.params.id;
   const title = (req.body as { title: string }).title;
   const body = (req.body as { body: string }).body;
@@ -74,7 +82,7 @@ export const updatePostById: RequestHandler = async (req, res, next) => {
 
   let post;
   try {
-    post = await Post.findById(id).exec();
+    post = await Post.findOne({ _id: id, creator: currentUser._id });
   } catch (err: any) {
     const error = new HttpError(err.message, 500);
     return next(error);
@@ -101,11 +109,12 @@ export const updatePostById: RequestHandler = async (req, res, next) => {
 
 // Delete Post By Id
 export const deletePostById: RequestHandler = async (req, res, next) => {
+  const currentUser = req.currentUser as CurrentUser;
   const id = req.params.id;
 
   let post;
   try {
-    post = await Post.findById(id).exec();
+    post = await Post.findOne({ _id: id, creator: currentUser._id });
   } catch (err: any) {
     const error = new HttpError(err.message, 500);
     return next(error);

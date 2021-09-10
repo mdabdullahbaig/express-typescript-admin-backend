@@ -2,9 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const comments_1 = require("../controllers/comments");
+const auth_1 = require("../middleware/auth");
 const router = (0, express_1.Router)();
-router.post("/", comments_1.createComment);
-router.get("/:postId", comments_1.getCommentsOnPost);
-router.patch("/:id", comments_1.updateCommentOnPost);
-router.delete("/:id", comments_1.deleteCommentOnPost);
+router.post("/", auth_1.auth, comments_1.createComment);
+router.get("/:postId", auth_1.auth, comments_1.getCommentsOnPost);
+router.patch("/:id", auth_1.auth, comments_1.updateCommentOnPost);
+router.delete("/:id", auth_1.auth, comments_1.deleteCommentOnPost);
 exports.default = router;

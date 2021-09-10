@@ -17,18 +17,19 @@ const posts_1 = __importDefault(require("../models/posts"));
 const HttpError_1 = require("../utils/HttpError");
 // Create Post
 const createPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentUser = req.currentUser;
     const title = req.body.title;
     const body = req.body.body;
     const imageUri = req.body.imageUri;
-    const creator = req.body.creator;
-    const createdPost = new posts_1.default({
-        title,
-        body,
-        imageUri,
-        creator,
-    });
+    const creator = currentUser._id;
+    let createdPost;
     try {
-        yield createdPost.save();
+        createdPost = yield new posts_1.default({
+            title,
+            body,
+            imageUri,
+            creator,
+        }).save();
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err, 500);
@@ -74,13 +75,14 @@ const getPostById = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 exports.getPostById = getPostById;
 // Update Post By Id
 const updatePostById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentUser = req.currentUser;
     const id = req.params.id;
     const title = req.body.title;
     const body = req.body.body;
     const imageUri = req.body.imageUri;
     let post;
     try {
-        post = yield posts_1.default.findById(id).exec();
+        post = yield posts_1.default.findOne({ _id: id, creator: currentUser._id });
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err.message, 500);
@@ -105,10 +107,11 @@ const updatePostById = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
 exports.updatePostById = updatePostById;
 // Delete Post By Id
 const deletePostById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentUser = req.currentUser;
     const id = req.params.id;
     let post;
     try {
-        post = yield posts_1.default.findById(id).exec();
+        post = yield posts_1.default.findOne({ _id: id, creator: currentUser._id });
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err.message, 500);

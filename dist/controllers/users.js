@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUserById = exports.updateUserById = exports.getUserById = exports.getUsers = exports.createUser = void 0;
+exports.deleteUserById = exports.updateUserById = exports.getUsers = exports.createUser = void 0;
 const users_1 = __importDefault(require("../models/users"));
 const HttpError_1 = require("../utils/HttpError");
 // Create User
@@ -71,32 +71,30 @@ const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.getUsers = getUsers;
 // Get User By Id
-const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.params.id;
-    let user;
-    try {
-        user = yield users_1.default.findById(id).exec();
-    }
-    catch (err) {
-        const error = new HttpError_1.HttpError(err.message, 500);
-        return next(error);
-    }
-    if (!user) {
-        const error = new HttpError_1.HttpError("There is no user present on this id.", 400);
-        return next(error);
-    }
-    res.status(200).json(user);
-});
-exports.getUserById = getUserById;
+// export const getUserById: RequestHandler = async (req, res, next) => {
+//   const currentUser = req.currentUser as CurrentUser;
+//   let user;
+//   try {
+//     user = await User.findOne({ _id: currentUser._id });
+//   } catch (err: any) {
+//     const error = new HttpError(err.message, 500);
+//     return next(error);
+//   }
+//   if (!user) {
+//     const error = new HttpError("There is no user present on this id.", 400);
+//     return next(error);
+//   }
+//   res.status(200).json(user);
+// };
 // Update User By Id
 const updateUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.params.id;
+    const currentUser = req.currentUser;
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
     const mobileNumber = req.body.mobileNumber;
     let user;
     try {
-        user = yield users_1.default.findById(id).exec();
+        user = yield users_1.default.findOne({ _id: currentUser._id });
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err.message, 500);

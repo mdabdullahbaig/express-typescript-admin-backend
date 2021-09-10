@@ -2,6 +2,10 @@ import { RequestHandler } from "express";
 import User from "../models/users";
 import { HttpError } from "../utils/HttpError";
 
+interface CurrentUser {
+  _id: string;
+}
+
 // Create User
 export const createUser: RequestHandler = async (req, res, next) => {
   const firstName = (req.body as { firstName: string }).firstName;
@@ -66,35 +70,36 @@ export const getUsers: RequestHandler = async (req, res, next) => {
 };
 
 // Get User By Id
-export const getUserById: RequestHandler = async (req, res, next) => {
-  const id = req.params.id;
+// export const getUserById: RequestHandler = async (req, res, next) => {
+//   const currentUser = req.currentUser as CurrentUser;
 
-  let user;
-  try {
-    user = await User.findById(id).exec();
-  } catch (err: any) {
-    const error = new HttpError(err.message, 500);
-    return next(error);
-  }
+//   let user;
+//   try {
+//     user = await User.findOne({ _id: currentUser._id });
+//   } catch (err: any) {
+//     const error = new HttpError(err.message, 500);
+//     return next(error);
+//   }
 
-  if (!user) {
-    const error = new HttpError("There is no user present on this id.", 400);
-    return next(error);
-  }
+//   if (!user) {
+//     const error = new HttpError("There is no user present on this id.", 400);
+//     return next(error);
+//   }
 
-  res.status(200).json(user);
-};
+//   res.status(200).json(user);
+// };
 
 // Update User By Id
 export const updateUserById: RequestHandler = async (req, res, next) => {
-  const id = req.params.id;
+  const currentUser = req.currentUser as CurrentUser;
+
   const firstName = (req.body as { firstName: string }).firstName;
   const lastName = (req.body as { lastName: string }).lastName;
   const mobileNumber = (req.body as { mobileNumber: string }).mobileNumber;
 
   let user;
   try {
-    user = await User.findById(id).exec();
+    user = await User.findOne({ _id: currentUser._id });
   } catch (err: any) {
     const error = new HttpError(err.message, 500);
     return next(error);

@@ -17,8 +17,9 @@ const HttpError_1 = require("../utils/HttpError");
 const comments_1 = __importDefault(require("../models/comments"));
 const posts_1 = __importDefault(require("../models/posts"));
 const createComment = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentUser = req.currentUser;
+    const commentedBy = currentUser._id;
     const body = req.body.body;
-    const commentedBy = req.body.commentedBy;
     const postId = req.body.postId;
     let createdComment;
     try {
@@ -62,11 +63,12 @@ const getCommentsOnPost = (req, res, next) => __awaiter(void 0, void 0, void 0, 
 });
 exports.getCommentsOnPost = getCommentsOnPost;
 const updateCommentOnPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentUser = req.currentUser;
     const id = req.params.id;
     const body = req.body.body;
     let comment;
     try {
-        comment = yield comments_1.default.findById(id).exec();
+        comment = yield comments_1.default.findOne({ _id: id, commentedBy: currentUser._id });
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err.message, 500);
@@ -88,10 +90,11 @@ const updateCommentOnPost = (req, res, next) => __awaiter(void 0, void 0, void 0
 });
 exports.updateCommentOnPost = updateCommentOnPost;
 const deleteCommentOnPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentUser = req.currentUser;
     const id = req.params.id;
     let comment;
     try {
-        comment = yield comments_1.default.findById(id).exec();
+        comment = yield comments_1.default.findOne({ _id: id, commentedBy: currentUser._id });
     }
     catch (err) {
         const error = new HttpError_1.HttpError(err.message, 500);

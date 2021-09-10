@@ -3,9 +3,14 @@ import { HttpError } from "../utils/HttpError";
 import Comment from "../models/comments";
 import Post from "../models/posts";
 
+interface CurrentUser {
+  _id: string;
+}
+
 export const createComment: RequestHandler = async (req, res, next) => {
+  const currentUser = req.currentUser as CurrentUser;
+  const commentedBy = currentUser._id;
   const body = (req.body as { body: string }).body;
-  const commentedBy = (req.body as { commentedBy: string }).commentedBy;
   const postId = (req.body as { postId: string }).postId;
 
   let createdComment;
@@ -51,12 +56,13 @@ export const getCommentsOnPost: RequestHandler = async (req, res, next) => {
 };
 
 export const updateCommentOnPost: RequestHandler = async (req, res, next) => {
+  const currentUser = req.currentUser as CurrentUser;
   const id = req.params.id;
   const body = (req.body as { body: string }).body;
 
   let comment;
   try {
-    comment = await Comment.findById(id).exec();
+    comment = await Comment.findOne({ _id: id, commentedBy: currentUser._id });
   } catch (err: any) {
     const error = new HttpError(err.message, 500);
     return next(error);
@@ -80,11 +86,12 @@ export const updateCommentOnPost: RequestHandler = async (req, res, next) => {
 };
 
 export const deleteCommentOnPost: RequestHandler = async (req, res, next) => {
+  const currentUser = req.currentUser as CurrentUser;
   const id = req.params.id;
 
   let comment;
   try {
-    comment = await Comment.findById(id).exec();
+    comment = await Comment.findOne({ _id: id, commentedBy: currentUser._id });
   } catch (err: any) {
     const error = new HttpError(err.message, 500);
     return next(error);
