@@ -7,7 +7,7 @@ interface CurrentUser {
 
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
   const currentUser = req.currentUser as CurrentUser;
-  console.log(currentUser);
+  //   console.log(currentUser);
 
   if (currentUser.isAdmin) {
     next();

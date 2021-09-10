@@ -9,11 +9,10 @@ interface CurrentUser {
 // Create Post
 export const createPost: RequestHandler = async (req, res, next) => {
   const currentUser = req.currentUser as CurrentUser;
-
+  const creator = currentUser._id;
   const title = (req.body as { title: string }).title;
   const body = (req.body as { body: string }).body;
   const imageUri = (req.body as { imageUri: string }).imageUri;
-  const creator = currentUser._id;
 
   let createdPost;
 

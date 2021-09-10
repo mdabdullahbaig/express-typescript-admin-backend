@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { authenticateUser, getCurrentUser } from "../controllers/auth";
 import RequestValidator from "../middleware/RequestValidator";
-import { authenticateUserSchema } from "../utils/authenticateUserSchema";
+import { authenticateLoginSchema } from "../utils/authSchema";
 import { auth } from "../middleware/auth";
 
 const router = Router();
 
 router.post(
   "/login",
-  RequestValidator(authenticateUserSchema),
+  RequestValidator(authenticateLoginSchema),
   authenticateUser
 );
 

@@ -37,7 +37,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     const decodedUser = await User.findById(decodedToken.userId, "-password");
 
-    console.log(decodedUser);
+    // console.log(decodedUser);
 
     if (!decodedUser) {
       const error = new HttpError(

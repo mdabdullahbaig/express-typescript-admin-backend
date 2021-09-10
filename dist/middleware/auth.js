@@ -29,7 +29,7 @@ const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
         const decodedToken = jsonwebtoken_1.default.verify(token, dev_1.default.privateKey);
         // console.log(decodedToken);
         const decodedUser = yield users_1.default.findById(decodedToken.userId, "-password");
-        console.log(decodedUser);
+        // console.log(decodedUser);
         if (!decodedUser) {
             const error = new HttpError_1.HttpError("Decoded user is not there, Authentication failed!!", 401);
             return next(error);

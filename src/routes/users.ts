@@ -10,7 +10,7 @@ import { auth } from "../middleware/auth";
 import { isAdmin } from "../middleware/isAdmin";
 
 import RequestValidator from "../middleware/RequestValidator";
-import { createUserSchema } from "../utils/createUserSchema";
+import { createUserSchema } from "../utils/userSchema";
 
 const router = Router();
 

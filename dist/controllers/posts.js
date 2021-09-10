@@ -18,10 +18,10 @@ const HttpError_1 = require("../utils/HttpError");
 // Create Post
 const createPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const currentUser = req.currentUser;
+    const creator = currentUser._id;
     const title = req.body.title;
     const body = req.body.body;
     const imageUri = req.body.imageUri;
-    const creator = currentUser._id;
     let createdPost;
     try {
         createdPost = yield new posts_1.default({

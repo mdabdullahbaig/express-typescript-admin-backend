@@ -8,10 +8,12 @@ import {
   getPostsByCreator,
 } from "../controllers/posts";
 import { auth } from "../middleware/auth";
+import RequestValidator from "../middleware/RequestValidator";
+import { createPostSchema } from "../utils/postSchema";
 
 const router = Router();
 
-router.post("/", auth, createPost);
+router.post("/", auth, RequestValidator(createPostSchema), createPost);
 router.get("/", auth, getPosts);
 router.get("/:id", auth, getPostById);
 router.patch("/:id", auth, updatePostById);

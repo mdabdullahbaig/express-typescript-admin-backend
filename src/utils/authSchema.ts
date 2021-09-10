@@ -1,6 +1,6 @@
-import { object, string, ref } from "yup";
+import { object, string } from "yup";
 
-export const authenticateUserSchema = object({
+export const authenticateLoginSchema = object({
   body: object({
     email: string()
       .email("Must be a valid email")

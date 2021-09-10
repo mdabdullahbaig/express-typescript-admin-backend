@@ -4,7 +4,7 @@ exports.isAdmin = void 0;
 const HttpError_1 = require("../utils/HttpError");
 const isAdmin = (req, res, next) => {
     const currentUser = req.currentUser;
-    console.log(currentUser);
+    //   console.log(currentUser);
     if (currentUser.isAdmin) {
         next();
     }
